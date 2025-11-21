@@ -1,0 +1,8 @@
+glad cmakelists
+https://github.com/rtryan98/glad/blob/master/CMakeLists.txt
+glfw
+https://github.com/glfw/glfw/blob/master/CMakeLists.txt
+glm
+https://github.com/g-truc/glm/blob/master/CMakeLists.txt
+main cmakelists
+lab3 modified

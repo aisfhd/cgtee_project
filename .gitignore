@@ -1,0 +1,32 @@
+# Exclude the directory where build artifacts are created
+build/
+Build/
+/build/
+/Build/
+
+# Exclude common build artifacts and object files
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.lib
+
+# CMake-specific files
+CMakeCache.txt
+cmake_install.cmake
+CMakeFiles/
+
+# Visual Studio user files (if applicable)
+*.user
+*.suo
+*.sln.docstates
+.vs/
+
+# Other common temporary files
+*~
+*.bak
+*.pdf
+.vscode/settings.json
+docs/
+doc/
