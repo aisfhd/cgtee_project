@@ -8,6 +8,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include "world/cube.h"
+#include "world/chunk.h"
+#include "world/mesh.h"
+
 static GLFWwindow *window;
 static int windowWidth = 1024;
 static int windowHeight = 768;

@@ -28,5 +28,6 @@ CMakeFiles/
 *.bak
 *.pdf
 .vscode/settings.json
+
 docs/
 doc/
