@@ -1,6 +1,6 @@
 #main cmake
 cmake_minimum_required(VERSION 4.0)
-project(cvgtee)
+project(cgtee)
 
 find_package(OpenGL REQUIRED)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
@@ -14,16 +14,41 @@ include_directories(
 	external/glfw-3.4/include
 	external/glm-1.0.2/
 	external/
-	lab3/
+	src/
 )
 
-add_executable(cvgtee
-	src/cvgtee.cpp
+add_executable(cgtee
+	src/cgtee.cpp
 )
-target_link_libraries(cvgtee
+target_link_libraries(cgtee
 	${OPENGL_LIBRARY}
 	glfw
 	glad
 )
-#set_target_properties(cvgtee PROPERTIES 
+
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    # Release w/o console
+    message(STATUS "Configuring 'cgtee' for **WINDOWS** subsystem (No Console)")
+        target_link_options(cgtee PRIVATE 
+        LINKER:/ENTRY:mainCRTStartup 
+        LINKER:/SUBSYSTEM:WINDOWS
+    )
+
+elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    # Debug + console
+    message(STATUS "Configuring 'cgtee' for **CONSOLE** subsystem")
+    target_link_options(cgtee PRIVATE 
+        LINKER:/SUBSYSTEM:CONSOLE
+    )
+
+else()
+    # Default
+    message(STATUS "Configuring 'cgtee' for default subsystem (usually CONSOLE)")
+    target_link_options(cgtee PRIVATE 
+        LINKER:/SUBSYSTEM:CONSOLE
+    )
+endif()
+
+
+#set_target_properties(cgtee PROPERTIES 
 #    LINK_FLAGS "/ENTRY:mainCRTStartup /SUBSYSTEM:WINDOWS")

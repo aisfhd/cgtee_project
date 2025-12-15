@@ -3,6 +3,8 @@ build/
 Build/
 /build/
 /Build/
+build_debug/
+build_release/
 
 # Exclude common build artifacts and object files
 *.o

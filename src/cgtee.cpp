@@ -27,7 +27,7 @@ int main(){
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
    	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
-    window = glfwCreateWindow(windowWidth, windowHeight, "cvgtee", NULL, NULL);
+    window = glfwCreateWindow(windowWidth, windowHeight, "cgtee", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cerr << "Failed to open a GLFW window." << std::endl;
