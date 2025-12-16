@@ -232,8 +232,8 @@ struct Cube
 		glUniformMatrix4fv(lightSpaceMatrixID, 1, GL_FALSE, &gLightSpace[0][0]);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, shadowDepthTex);
-		glUniform1i(shadowMapID, 0);
+		//(GL_TEXTURE_2D, shadowDepthTex);
+		//glUniform1i(shadowMapID, 0);
 
 		// Draw the box
 		glDrawElements(
