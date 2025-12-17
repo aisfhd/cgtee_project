@@ -14,6 +14,7 @@ include_directories(
 	external/glfw-3.4/include
 	external/glm-1.0.2/
 	external/
+    external/tinygltf-2.9.7
 	src/
 )
 

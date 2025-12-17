@@ -1,0 +1,8 @@
+Model Information:
+* title:	Low Poly Red Mushroom 3D Model
+* source:	https://sketchfab.com/3d-models/low-poly-red-mushroom-3d-model-5738764b3868416a864b79db6278bf39
+* author:	yyacobb (https://sketchfab.com/yyacobb)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works
