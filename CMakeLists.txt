@@ -21,6 +21,8 @@ include_directories(
 add_executable(cgtee
 	src/cgtee.cpp
     src/render/shader.cpp
+    src/world/mesh.cpp
+    src/other/globals.cpp
 )
 target_link_libraries(cgtee
 	${OPENGL_LIBRARY}

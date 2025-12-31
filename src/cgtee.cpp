@@ -5,6 +5,9 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "render/shader.h"
+#include "other/globals.h"
+#include "world/chunkrawdata.h"
+#include "world/mesh.h"
 
 #include <vector>
 #include <iostream>
@@ -28,22 +31,11 @@
 #define TINYGLTF_NO_STB_IMAGE 
 #include "tinygltf-2.9.7/tiny_gltf.h" 
 
-static GLFWwindow *window;
-static int windowWidth = 1024;
-static int windowHeight = 768;
-
-const int CHUNK_SIZE = 16;
-const float BLOCK_SCALE = 5.0f;
-const int RENDER_DISTANCE = 8; 
-const float NOISE_SCALE = 0.04f;
 // Вода убрана по просьбе
 
 // Глобальный шейдер
-GLuint globalProgramID = 0;
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 60.0f, 0.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
 
 float verticalVelocity = 0.0f;
 const float gravity = -1000.0f;
@@ -94,26 +86,6 @@ int getWorldHeight(float x, float z) {
 float randomDeterministic(float x, float z) {
     return  glm::fract(sin(glm::dot(glm::vec2(x, z), glm::vec2(12.9898, 78.233))) * 43758.5453);
 }
-
-// --- Типы объектов ---
-enum ObjectType {
-    NONE = 0,
-    TREE_SMALL,
-    TREE_GIANT,
-    MUSHROOM
-};
-
-struct ChunkRawData {
-    int cx, cz;
-    std::vector<glm::vec3> positions;
-    std::vector<glm::vec4> colors;
-    std::vector<glm::vec3> normals;
-    std::vector<glm::vec2> uvs;
-    std::vector<unsigned int> indices;
-    
-    // Сюда сохраняем позиции объектов
-    std::vector<std::pair<ObjectType, glm::vec3>> objects;
-};
 
 // --- Простой загрузчик GLTF Моделей ---
 struct ModelGLTF {
@@ -196,73 +168,6 @@ struct ModelGLTF {
 ModelGLTF treeModel;
 ModelGLTF giantTreeModel;
 ModelGLTF mushroomModel;
-
-struct Mesh {
-    GLuint vao, vbo, cbo, nbo, tbo, ebo;
-    int indexCount;
-    bool isReady = false;
-    
-    // Храним объекты для этого чанка
-    std::vector<std::pair<ObjectType, glm::vec3>> chunkObjects;
-
-    void cleanup() {
-        if (isReady) {
-            glDeleteVertexArrays(1, &vao);
-            glDeleteBuffers(1, &vbo);
-            glDeleteBuffers(1, &cbo);
-            glDeleteBuffers(1, &nbo);
-            glDeleteBuffers(1, &tbo);
-            glDeleteBuffers(1, &ebo);
-            isReady = false;
-        }
-    }
-
-    void initialize(const ChunkRawData &data) {
-        chunkObjects = data.objects; // Копируем список объектов
-        
-        if (data.positions.empty()) return;
-
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
-
-        glGenBuffers(1, &vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, data.positions.size() * sizeof(glm::vec3), &data.positions[0], GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-        glEnableVertexAttribArray(0);
-
-        glGenBuffers(1, &cbo);
-        glBindBuffer(GL_ARRAY_BUFFER, cbo);
-        glBufferData(GL_ARRAY_BUFFER, data.colors.size() * sizeof(glm::vec4), &data.colors[0], GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void *)0); 
-        glEnableVertexAttribArray(1);
-
-        glGenBuffers(1, &nbo);
-        glBindBuffer(GL_ARRAY_BUFFER, nbo);
-        glBufferData(GL_ARRAY_BUFFER, data.normals.size() * sizeof(glm::vec3), &data.normals[0], GL_STATIC_DRAW);
-        glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-        glEnableVertexAttribArray(2);
-
-        glGenBuffers(1, &tbo);
-        glBindBuffer(GL_ARRAY_BUFFER, tbo);
-        glBufferData(GL_ARRAY_BUFFER, data.uvs.size() * sizeof(glm::vec2), &data.uvs[0], GL_STATIC_DRAW);
-        glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, (void *)0);
-        glEnableVertexAttribArray(3);
-
-        glGenBuffers(1, &ebo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.indices.size() * sizeof(unsigned int), &data.indices[0], GL_STATIC_DRAW);
-
-        indexCount = data.indices.size();
-        isReady = true;
-    }
-
-    void render() {
-        if (!isReady) return;
-        glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-    }
-};
 
 struct ChunkCoord {
     int x, z;
