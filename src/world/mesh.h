@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <vector>
-#include "../other/globals.h"
+#include "../other/enums.h"
 #include "chunkrawdata.h"
 struct Mesh {
     GLuint vao, vbo, cbo, nbo, tbo, ebo;

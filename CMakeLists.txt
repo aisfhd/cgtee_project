@@ -20,9 +20,18 @@ include_directories(
 
 add_executable(cgtee
 	src/cgtee.cpp
+
     src/render/shader.cpp
+    src/render/texture.cpp
+    src/render/model.cpp
+
     src/world/mesh.cpp
+    src/world/chunk.cpp
+    src/world/worldgen.cpp
+    src/world/physics.cpp
+
     src/other/globals.cpp
+    src/other/controls.cpp
 )
 target_link_libraries(cgtee
 	${OPENGL_LIBRARY}
