@@ -1,5 +1,6 @@
 #define TINYGLTF_IMPLEMENTATION
 #include "model.h"
+#include "../other/pathglobals.h"
 void ModelGLTF::draw(glm::mat4 modelMatrix, GLuint modelLoc, GLuint colorLoc)
 {
     if (!loaded)
@@ -12,14 +13,16 @@ void ModelGLTF::draw(glm::mat4 modelMatrix, GLuint modelLoc, GLuint colorLoc)
     glBindVertexArray(0);
 }
 
-void ModelGLTF::load(const std::string &filename)
+void ModelGLTF::load(const std::string &modelName)
 {
+    std::string gltfModelDir = globalPath + assetsPath + "\\" + modelName;
+    std::string gltfFilename = gltfModelDir + "\\scene.gltf";
     tinygltf::Model model;
     tinygltf::TinyGLTF loader;
     std::string err;
     std::string warn;
 
-    bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, filename);
+    bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, gltfFilename);
     // Если у тебя бинарный glb, используй LoadBinaryFromFile
 
     if (!warn.empty())
@@ -28,7 +31,7 @@ void ModelGLTF::load(const std::string &filename)
         std::cout << "Err: " << err << std::endl;
     if (!ret)
     {
-        std::cout << "Failed to parse glTF: " << filename << std::endl;
+        std::cout << "Failed to parse glTF: " << gltfFilename << std::endl;
         return;
     }
 
@@ -74,7 +77,7 @@ void ModelGLTF::load(const std::string &filename)
                 indexCount = indexAccessor.count;
             }
             loaded = true;
-            std::cout << "Loaded model: " << filename << " Verts: " << accessor.count << std::endl;
+            std::cout << "Loaded model: " << gltfFilename << " Verts: " << accessor.count << std::endl;
         }
     }
     glBindVertexArray(0);

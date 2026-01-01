@@ -2,5 +2,4 @@
 
 mkdir -p build_debug
 cmake -DCMAKE_BUILD_TYPE=Debug -S ./ -B ./build_debug/
-cmake --build ./build_debug/
-start ./build_debug/Debug/cgtee.exe
+cmake --build ./build_debug/ --config Debug -j

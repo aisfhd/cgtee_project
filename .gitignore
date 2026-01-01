@@ -5,6 +5,7 @@ Build/
 /Build/
 build_debug/
 build_release/
+/install/
 
 # Exclude common build artifacts and object files
 *.o

@@ -31,6 +31,7 @@ add_executable(cgtee
     src/world/physics.cpp
 
     src/other/globals.cpp
+    src/other/pathglobals.cpp
     src/other/controls.cpp
 )
 target_link_libraries(cgtee
@@ -65,3 +66,7 @@ endif()
 
 #set_target_properties(cgtee PROPERTIES 
 #    LINK_FLAGS "/ENTRY:mainCRTStartup /SUBSYSTEM:WINDOWS")
+
+install(TARGETS cgtee DESTINATION bin)
+install(DIRECTORY src/assets/ DESTINATION assets)
+install(DIRECTORY src/shaders/ DESTINATION shaders)

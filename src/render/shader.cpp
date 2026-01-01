@@ -6,8 +6,13 @@
 #include <sstream>
 #include <vector>
 
-GLuint LoadShadersFromFile(const char *vertex_file_path, const char *fragment_file_path)
+#include "../other/pathglobals.h"
+
+GLuint LoadShadersFromFile(std::string vertex_file, std::string fragment_file)
 {
+	std::string tempPath = globalPath + shadersPath + "\\";
+	std::string vertex_file_path = tempPath + vertex_file;
+	std::string fragment_file_path = tempPath + fragment_file;
 	// Create the shaders
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
@@ -24,7 +29,7 @@ GLuint LoadShadersFromFile(const char *vertex_file_path, const char *fragment_fi
 	}
 	else
 	{
-		printf("Vertex shader not found %s.\n", vertex_file_path);
+		std::cout << "Vertex shader not found: " << vertex_file_path << std::endl;
 		return 0;
 	}
 
@@ -40,7 +45,7 @@ GLuint LoadShadersFromFile(const char *vertex_file_path, const char *fragment_fi
 	}
 	else
 	{
-		printf("Fragment shader not found %s.\n", fragment_file_path);
+		std::cout << "Fragment shader not found: " << fragment_file_path << std::endl;
 		return 0;
 	}
 
@@ -48,7 +53,7 @@ GLuint LoadShadersFromFile(const char *vertex_file_path, const char *fragment_fi
 	int InfoLogLength;
 
 	// Compile Vertex Shader
-	printf("Compiling vertex shader : %s\n", vertex_file_path);
+	std::cout << "Compiling vertex shader: " << vertex_file_path << std::endl;
 	char const *VertexSourcePointer = VertexShaderCode.c_str();
 	glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
 	glCompileShader(VertexShaderID);
@@ -57,7 +62,7 @@ GLuint LoadShadersFromFile(const char *vertex_file_path, const char *fragment_fi
 	glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
 	if (!Result)
 	{
-		printf("Error compiling vertex shader : %s\n", vertex_file_path);
+		std::cout << "Error compiling vertex shader: " << vertex_file_path;
 		glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 		if (InfoLogLength > 0)
 		{
@@ -69,7 +74,7 @@ GLuint LoadShadersFromFile(const char *vertex_file_path, const char *fragment_fi
 	}
 
 	// Compile Fragment Shader
-	printf("Compiling fragment shader : %s\n", fragment_file_path);
+	std::cout << "Compiling fragment shader : " << fragment_file_path << std::endl;
 	char const *FragmentSourcePointer = FragmentShaderCode.c_str();
 	glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
 	glCompileShader(FragmentShaderID);
@@ -78,7 +83,7 @@ GLuint LoadShadersFromFile(const char *vertex_file_path, const char *fragment_fi
 	glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
 	if (!Result)
 	{
-		printf("Error compiling fragment shader : %s\n", fragment_file_path);
+		std::cout << "Error compiling fragment shader : " << fragment_file_path << std::endl;
 		glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 		if (InfoLogLength > 0)
 		{

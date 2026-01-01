@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 
 #include "other/glglobals.h"
+#include "other/pathglobals.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -20,6 +21,7 @@
 #include <vector>
 #include <iostream>
 #include <thread>
+#include <filesystem>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -40,13 +42,15 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 ModelGLTF treeModel;
-ModelGLTF giantTreeModel;
+//ModelGLTF giantTreeModel;
+ModelGLTF tree2Model;
 ModelGLTF mushroomModel;
 
 // --- Генерация Куба ---
 
 int main(void)
 {
+    system("echo %CD%");
     if (!glfwInit())
         return -1;
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -72,13 +76,13 @@ int main(void)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    globalProgramID = LoadShadersFromFile("src/shaders/lighting.vert", "src/shaders/lighting.frag");
+    globalProgramID = LoadShadersFromFile("lighting.vert", "lighting.frag");
 
-    treeModel.load("src/assets/models/tree/scene.gltf");
-    giantTreeModel.load("src/assets/models/giant_tree/scene.gltf");
-    mushroomModel.load("src/assets/models/mushroom/scene.gltf");
+    treeModel.load("tree");
+    tree2Model.load("tree2");
+    mushroomModel.load("mushroom");
 
-    GLuint blockTexture = loadTexture("src/block.png");
+    GLuint blockTexture = loadTexture("../assets/textures/block.png");
 
     std::thread generator(chunkWorkerThread);
     generator.detach();
@@ -169,13 +173,13 @@ int main(void)
                     glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &(vp * objModel)[0][0]);
                     treeModel.draw(objModel, modelLoc, colorAttribLoc);
                 }
-                else if (obj.first == TREE_GIANT)
-                {
-                    scale = 50.0f; // Большое дерево
-                    objModel = glm::scale(objModel, glm::vec3(scale));
-                    glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &(vp * objModel)[0][0]);
-                    giantTreeModel.draw(objModel, modelLoc, colorAttribLoc);
-                }
+                // else if (obj.first == TREE_GIANT)
+                // {
+                //     scale = 50.0f; // Большое дерево
+                //     objModel = glm::scale(objModel, glm::vec3(scale));
+                //     glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &(vp * objModel)[0][0]);
+                //     giantTreeModel.draw(objModel, modelLoc, colorAttribLoc);
+                //}
                 else if (obj.first == MUSHROOM)
                 {
                     scale = 3.0f; // Маленький гриб
