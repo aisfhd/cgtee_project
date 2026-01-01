@@ -48,12 +48,7 @@ ChunkRawData generateChunkDataCPU(int cx, int cz)
 
                 // Чтобы не пересекались, используем else if
                 // Настраиваем вероятность (0.98 = редко)
-                if (r > 0.99995f)
-                {
-                    // Гигантское дерево (Очень редко)
-                    data.objects.push_back({TREE_GIANT, glm::vec3(posX, h * BLOCK_SCALE + (BLOCK_SCALE / 2.0f), posZ)});
-                }
-                else if (r > 0.99985f)
+                if (r > 0.99985f)
                 {
                     // Обычное дерево
                     data.objects.push_back({TREE_SMALL, glm::vec3(posX, h * BLOCK_SCALE + (BLOCK_SCALE / 2.0f), posZ)});
@@ -61,7 +56,7 @@ ChunkRawData generateChunkDataCPU(int cx, int cz)
                 else if (r > 0.9997f)
                 {
                     // Гриб
-                    data.objects.push_back({MUSHROOM, glm::vec3(posX, h * BLOCK_SCALE + (BLOCK_SCALE / 2.0f), posZ)});
+                    data.objects.push_back({MUSHROOM, glm::vec3(posX, h * BLOCK_SCALE + (BLOCK_SCALE / 2.0f) + 1.0f * BLOCK_SCALE, posZ)});
                 }
             }
         }

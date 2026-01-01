@@ -167,23 +167,18 @@ int main(void)
 
                 if (obj.first == TREE_SMALL)
                 {
-                    scale = 20.0f; // Подбери значение
+                    scale = 4.0f; // Подбери значение
                     objModel = glm::scale(objModel, glm::vec3(scale));
+                    // objModel = objModel * treeModel.modelTransform;  // Removed to avoid double application
                     // Считаем MVP и рисуем
                     glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &(vp * objModel)[0][0]);
                     treeModel.draw(objModel, modelLoc, colorAttribLoc);
                 }
-                // else if (obj.first == TREE_GIANT)
-                // {
-                //     scale = 50.0f; // Большое дерево
-                //     objModel = glm::scale(objModel, glm::vec3(scale));
-                //     glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &(vp * objModel)[0][0]);
-                //     giantTreeModel.draw(objModel, modelLoc, colorAttribLoc);
-                //}
                 else if (obj.first == MUSHROOM)
                 {
                     scale = 3.0f; // Маленький гриб
                     objModel = glm::scale(objModel, glm::vec3(scale));
+                    // objModel = objModel * mushroomModel.modelTransform;  // Removed to avoid double application
                     glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &(vp * objModel)[0][0]);
                     mushroomModel.draw(objModel, modelLoc, colorAttribLoc);
                 }
