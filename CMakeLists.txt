@@ -24,6 +24,7 @@ add_executable(cgtee
     src/render/shader.cpp
     src/render/texture.cpp
     src/render/model.cpp
+    src/render/shadow.cpp
 
     src/world/mesh.cpp
     src/world/chunk.cpp

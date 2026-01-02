@@ -21,3 +21,6 @@ std::vector<ChunkRawData> uploadQueue;
 std::mutex uploadQueueMutex;
 std::atomic<bool> threadRunning{true};
 std::set<ChunkCoord> chunksBeingProcessed;
+
+GLuint sunVAO = 0, sunVBO = 0, sunEBO = 0;
+int sunIndexCount = 0;

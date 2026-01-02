@@ -28,6 +28,9 @@ extern float verticalVelocity;
 extern const float gravity;
 extern const float jumpForce;
 extern const float playerHeight;
+
+extern GLuint sunVAO, sunVBO, sunEBO;
+extern int sunIndexCount;
 extern bool isGrounded;
 
 extern bool firstMouse;

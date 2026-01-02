@@ -24,5 +24,5 @@ struct ModelGLTF
 
     void load(const std::string &modelName);
 
-    void draw(glm::mat4 modelMatrix, GLuint modelLoc, GLuint colorLoc);
+    void draw(glm::mat4 vp, glm::mat4 modelMatrix, GLuint mvpLoc, GLuint modelLoc, GLuint colorLoc);
 };

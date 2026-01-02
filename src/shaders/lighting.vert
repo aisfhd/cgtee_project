@@ -14,7 +14,7 @@ out float Visibility;
 uniform mat4 MVP;
 uniform mat4 Model;
 
-const float density = 0.0035; // Плотность тумана
+const float density = 0.0001; // Further reduced fog density
 const float gradient = 1.5;
 
 void main()

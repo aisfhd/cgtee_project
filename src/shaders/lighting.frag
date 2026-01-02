@@ -21,6 +21,46 @@ uniform vec3 pointLightColor;
 
 uniform vec3 skyColor;
 
+// --- ADDITIONS START ---
+// Shadow Map Uniforms (Matching lab3_cornellbox.cpp)
+uniform sampler2D shadowMap;
+uniform mat4 lightSpaceMatrix;
+
+// Shadow Calculation Function with PCF
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDirNorm)
+{
+    // Perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // Transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    
+    // Get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    
+    // Keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+    if(projCoords.z > 1.0)
+        return 0.0;
+
+    // Dynamic bias based on light angle to reduce shadow acne
+    float bias = max(0.005 * (1.0 - dot(normal, lightDirNorm)), 0.0005);
+    
+    // PCF (Percentage-Closer Filtering) for soft shadows
+    float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
+        }    
+    }
+    shadow /= 9.0;
+    
+    return shadow;
+}
+// --- ADDITIONS END ---
+
 void main()
 {
     vec4 texColor = texture(texture1, TexCoord);
@@ -39,6 +79,17 @@ void main()
     float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0);
     vec3 specular = 0.5 * spec * lightColor; 
 
+    // --- ADDITIONS START ---
+    // Calculate shadow factor for the sun
+    vec4 fragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
+    float shadow = ShadowCalculation(fragPosLightSpace, norm, lightDirNorm);
+
+    // Apply shadow to sun's lighting (diffuse and specular)
+    // We multiply by (1.0 - shadow) so that shadow=1.0 results in 0% light
+    diffuse *= (1.0 - shadow);
+    specular *= (1.0 - shadow);
+    // --- ADDITIONS END ---
+
     // --- 2. Точечный свет (Point Light) ---
     float distance = length(pointLightPos - FragPos);
     // Затухание света с расстоянием
@@ -54,16 +105,13 @@ void main()
     vec3 pointSpecular = 0.8 * pointSpec * pointLightColor * attenuation;
 
     // --- Итог ---
-    vec3 ambient = 0.4 * lightColor;
-    
+    vec3 ambient = 0.3 * lightColor;
     // Суммируем весь свет
     vec3 lighting = (ambient + diffuse + specular + pointDiffuse + pointSpecular);
-    
     vec3 result = lighting * Color.rgb * texColor.rgb;
 
     // Смешивание с туманом
     vec3 finalRGB = mix(skyColor, result, Visibility);
-    
     // Используем Color.a для прозрачности воды
     FinalColor = vec4(finalRGB, Color.a); 
 }

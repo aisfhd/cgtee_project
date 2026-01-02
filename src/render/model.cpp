@@ -5,15 +5,18 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
 #include "texture.h"
-void ModelGLTF::draw(glm::mat4 modelMatrix, GLuint modelLoc, GLuint colorLoc)
+void ModelGLTF::draw(glm::mat4 vp, glm::mat4 modelMatrix, GLuint mvpLoc, GLuint modelLoc, GLuint colorLoc)
 {
     if (!loaded)
         return;
     glm::mat4 fullModel = modelMatrix * modelTransform;
     // Красим модель в белый (или текстуру, если есть)
-    glVertexAttrib4f(1, 1.0f, 1.0f, 1.0f, 1.0f);
+    if (colorLoc > 0)
+        glVertexAttrib4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f);
     for (const auto& subMesh : subMeshes) {
         glm::mat4 subModel = fullModel * subMesh.subTransform;
+        glm::mat4 mvp = vp * subModel;
+        glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &mvp[0][0]);
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &subModel[0][0]);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, subMesh.textureID);
@@ -51,7 +54,7 @@ void ModelGLTF::load(const std::string &modelName)
     }
 
     // Compute model transform from the first node in the default scene
-    modelTransform = glm::mat4(1.0f);
+    glm::mat4 rootTransform = glm::mat4(1.0f);
     if (model.scenes.size() > 0) {
         int scene_idx = 0;
         const tinygltf::Scene& scene = model.scenes[scene_idx];
@@ -60,7 +63,7 @@ void ModelGLTF::load(const std::string &modelName)
             const tinygltf::Node& node = model.nodes[node_idx];
             if (node.matrix.size() == 16) {
                 for (int i = 0; i < 16; ++i) {
-                    modelTransform[i / 4][i % 4] = static_cast<float>(node.matrix[i]);
+                    rootTransform[i / 4][i % 4] = static_cast<float>(node.matrix[i]);
                 }
             } else {
                 glm::vec3 scale(1.0f), trans(0.0f);
@@ -74,10 +77,13 @@ void ModelGLTF::load(const std::string &modelName)
                 if (node.translation.size() == 3) {
                     trans = glm::vec3(static_cast<float>(node.translation[0]), static_cast<float>(node.translation[1]), static_cast<float>(node.translation[2]));
                 }
-                modelTransform = glm::translate(glm::mat4(1.0f), trans) * glm::mat4_cast(rot) * glm::scale(glm::mat4(1.0f), scale);
+                rootTransform = glm::translate(glm::mat4(1.0f), trans) * glm::mat4_cast(rot) * glm::scale(glm::mat4(1.0f), scale);
             }
         }
     }
+
+    // Set modelTransform to identity to apply root transform to submeshes
+    modelTransform = glm::mat4(1.0f);
 
     // Helper function to get node transform
     auto getNodeTransform = [](const tinygltf::Node& node) -> glm::mat4 {
@@ -115,7 +121,7 @@ void ModelGLTF::load(const std::string &modelName)
                 const tinygltf::Primitive& primitive = mesh.primitives[primIdx];
 
                 SubMesh subMesh;
-                subMesh.subTransform = glm::inverse(modelTransform) * worldTransform;
+                subMesh.subTransform = worldTransform;
                 subMesh.textureID = 0; // default
 
                 // Get texture from material
@@ -244,9 +250,15 @@ void ModelGLTF::load(const std::string &modelName)
     loaded = true;
     std::cout << "Loaded model: " << gltfFilename << " with " << subMeshes.size() << " submeshes" << std::endl;
 
+    // Apply correction to upright the models
+    glm::mat4 correction = glm::inverse(rootTransform);
+    for (auto& sub : subMeshes) {
+        sub.subTransform = correction * sub.subTransform;
+    }
+
     // Adjust submesh transforms for mushroom
     if (modelName == "mushroom" && subMeshes.size() == 2) {
-        subMeshes[1].subTransform = subMeshes[1].subTransform * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -15.0f, 0.0f));
+        subMeshes[1].subTransform = subMeshes[1].subTransform * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 15.0f, 0.0f));
     }
     glBindVertexArray(0);
 }
