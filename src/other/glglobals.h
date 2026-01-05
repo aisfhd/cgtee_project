@@ -13,7 +13,7 @@ extern GLuint texLoc;
 
 extern GLuint shadowFBO;
 extern GLuint shadowDepthTex;
-extern const int shadowRes; // Resolution of the shadow map
+extern const int shadowRes;
 extern GLuint depthProgramID;
 extern GLuint depthMVPloc;
 extern glm::mat4 lightSpaceMatrix; 

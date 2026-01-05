@@ -4,5 +4,6 @@ enum ObjectType
     NONE = 0,
     TREE_SMALL,
     TREE_GIANT,
-    MUSHROOM
+    MUSHROOM,
+    UNICORN
 };

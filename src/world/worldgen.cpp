@@ -36,7 +36,6 @@ int getWorldHeight(float x, float z)
     return (int)(val * 12.0f);
 }
 
-// Псевдо-случайное число для генерации деревьев (детерминированное по координатам)
 float randomDeterministic(float x, float z)
 {
     return glm::fract(sin(glm::dot(glm::vec2(x, z), glm::vec2(12.9898, 78.233))) * 43758.5453);

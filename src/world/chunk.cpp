@@ -19,49 +19,46 @@ ChunkRawData generateChunkDataCPU(int cx, int cz)
             float posX = worldX * BLOCK_SCALE;
             float posZ = worldZ * BLOCK_SCALE;
 
-            glm::vec4 color(0.2f, 0.7f, 0.2f, 1.0f); // Трава
+            glm::vec4 color(0.2f, 0.7f, 0.2f, 1.0f);
             int texID = 0;
             if (h > 6)
             {
                 color = glm::vec4(0.9f, 0.9f, 0.95f, 1.0f);
                 texID = 1;
-            } // Снег
+            }
             else if (h <= 0)
             {
                 color = glm::vec4(0.8f, 0.8f, 0.4f, 1.0f);
                 texID = 3;
-            } // Песок
+            }
 
             addCubeToRaw(data, posX, h * BLOCK_SCALE, posZ, BLOCK_SCALE, color, texID);
 
-            // Земля под блоком
             for (int d = 1; d <= 2; d++)
             {
                 addCubeToRaw(data, posX, (h - d) * BLOCK_SCALE, posZ, BLOCK_SCALE, glm::vec4(0.4f, 0.3f, 0.2f, 1.0f), 3);
             }
 
-            // --- Генерация объектов (Деревья, Грибы) ---
-            // Генерируем только на траве (h > 0 и h <= 6)
             if (h > 0 && h <= 6)
             {
                 float r = randomDeterministic((float)worldX, (float)worldZ);
-
-                // Чтобы не пересекались, используем else if
-                // Настраиваем вероятность (0.98 = редко)
                 if (r > 0.99985f)
                 {
-                    // Обычное дерево
                     data.objects.push_back({TREE_SMALL, glm::vec3(posX, h * BLOCK_SCALE + (BLOCK_SCALE / 2.0f), posZ)});
                 }
                 else if (r > 0.9997f)
                 {
-                    // Гриб
                     float groundedY = h * BLOCK_SCALE + (BLOCK_SCALE / 2.0f) - (0.15f * BLOCK_SCALE);
                     data.objects.push_back({MUSHROOM, glm::vec3(posX, groundedY, posZ)});
+                }
+                else if (r > 0.9995f)
+                {
+                    data.objects.push_back({UNICORN, glm::vec3(posX, h * BLOCK_SCALE + (BLOCK_SCALE / 2.0f), posZ)});
                 }
             }
         }
     }
+    
     return data;
 }
 

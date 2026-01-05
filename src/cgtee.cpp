@@ -43,11 +43,9 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 ModelGLTF treeModel;
-// ModelGLTF giantTreeModel;
-ModelGLTF tree2Model;
 ModelGLTF mushroomModel;
+ModelGLTF unicornModel;
 
-// --- Генерация Куба ---
 
 int main(void)
 {
@@ -72,8 +70,7 @@ int main(void)
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         return -1;
 
-    // --- ОБЯЗАТЕЛЬНО: Инициализация системы теней ---
-    initShadowMapping(); // Без этого вызова теней не будет вообще!
+    initShadowMapping();
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -83,20 +80,18 @@ int main(void)
     globalProgramID = LoadShadersFromFile("lighting.vert", "lighting.frag");
 
     treeModel.load("tree");
-    tree2Model.load("tree2");
     mushroomModel.load("mushroom");
+    unicornModel.load("unicorn");
 
     GLuint blockTexture = loadTexture("../assets/textures/block.png");
 
     std::thread generator(chunkWorkerThread);
     generator.detach();
 
-    // Параметры света
     glm::vec3 lightDir = glm::normalize(glm::vec3(1.0f, 0.5f, 0.3f));
     glm::vec3 lightColor(1.0f, 0.95f, 0.9f);
-    glm::vec3 skyColor(0.2f, 0.3f, 0.5f); // Darker sky color
+    glm::vec3 skyColor(0.2f, 0.3f, 0.5f);
 
-    // Получаем локации униформ один раз (для оптимизации)
     GLuint mvpLoc = glGetUniformLocation(globalProgramID, "MVP");
     GLuint modelLoc = glGetUniformLocation(globalProgramID, "Model");
     GLuint viewPosLoc = glGetUniformLocation(globalProgramID, "viewPos");
@@ -117,17 +112,15 @@ int main(void)
 
         processInput(window);
         updateChunksManager();
+        unicornModel.updateAnimation(currentFrame);
 
-        // 1. Сначала рассчитываем матрицы для текущего кадра
         glm::mat4 projection = glm::perspective(glm::radians(fov), (float)windowWidth / (float)windowHeight, 0.1f, 3000.0f);
         glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         glm::mat4 vp = projection * view;
 
-        // Позиция "солнца" следует за игроком для покрытия тенями области вокруг него
         glm::vec3 lightPos = cameraPos + lightDir * 1000.0f;
         lightSpaceMatrix = getLightSpaceMatrix(lightPos, cameraPos);
 
-        // --- ПАСС 1: РЕНДЕР В КАРТУ ТЕНЕЙ ---
         glViewport(0, 0, shadowRes, shadowRes);
         glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -136,7 +129,6 @@ int main(void)
         glUseProgram(depthProgramID);
         glEnable(GL_DEPTH_TEST);
 
-        // Рисуем чанки в карту теней
         glm::mat4 modelIdentity = glm::mat4(1.0f);
         for (auto &kv : activeChunks)
         {
@@ -147,7 +139,6 @@ int main(void)
             kv.second.render();
         }
 
-        // Рисуем объекты в карту теней
         for (auto &kv : activeChunks)
         {
             if (!kv.second.isReady)
@@ -158,48 +149,47 @@ int main(void)
                 float scale = (obj.first == TREE_SMALL) ? 4.0f : 3.0f;
                 objModel = glm::scale(objModel, glm::vec3(scale));
 
-                // Use depthMVPloc for the first parameter, but pass -1 for unused uniforms
                 if (obj.first == TREE_SMALL)
                     treeModel.draw(lightSpaceMatrix, objModel, depthMVPloc, (GLuint)-1, (GLuint)-1);
                 else if (obj.first == MUSHROOM)
                     mushroomModel.draw(lightSpaceMatrix, objModel, depthMVPloc, (GLuint)-1, (GLuint)-1);
+                else if (obj.first == UNICORN)
+                {
+                    glm::mat4 uniModel = glm::translate(glm::mat4(1.0f), obj.second);
+                    uniModel = glm::scale(uniModel, glm::vec3(2.0f));
+                    unicornModel.draw(lightSpaceMatrix, uniModel, depthMVPloc, (GLuint)-1, (GLuint)-1);
+                }
             }
         }
 
         glCullFace(GL_BACK);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        // --- ПАСС 2: ОСНОВНОЙ РЕНДЕР НА ЭКРАН ---
         glViewport(0, 0, windowWidth, windowHeight);
         glClearColor(skyColor.x, skyColor.y, skyColor.z, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(globalProgramID);
 
-        // Передаем униформы света
         glUniformMatrix4fv(lightSpaceMatrixLoc, 1, GL_FALSE, &lightSpaceMatrix[0][0]);
         glUniform3fv(lightDirLoc, 1, &lightDir[0]);
         glUniform3fv(lightColorLoc, 1, &lightColor[0]);
         glUniform3fv(skyColorLoc, 1, &skyColor[0]);
         glUniform3fv(viewPosLoc, 1, &cameraPos[0]);
 
-        // Привязываем текстуру теней к Unit 1
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, shadowDepthTex);
         glUniform1i(shadowMapLoc, 1);
 
-        // Привязываем текстуру блоков к Unit 0
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, blockTexture);
         glUniform1i(texLoc, 0);
 
-        // Точечный свет (летающий шар)
         float time = (float)glfwGetTime();
         glm::vec3 pLightPos = glm::vec3(sin(time) * 50.0f, 50.0f, cos(time) * 50.0f);
         glUniform3fv(pointLightPosLoc, 1, &pLightPos[0]);
         glUniform3fv(pointLightColorLoc, 1, &glm::vec3(0.2f, 0.1f, 0.0f)[0]);
 
-        // Рисуем чанки
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelIdentity[0][0]);
         for (auto &kv : activeChunks)
         {
@@ -210,7 +200,7 @@ int main(void)
             kv.second.render();
         }
 
-        // Рисуем объекты (Деревья, Грибы)
+
         for (auto &kv : activeChunks)
         {
             if (!kv.second.isReady)
@@ -221,14 +211,18 @@ int main(void)
                 if (obj.first == TREE_SMALL)
                 {
                     objModel = glm::scale(objModel, glm::vec3(4.0f));
-                    // glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &(vp * objModel)[0][0]); // Now set inside draw
                     treeModel.draw(vp, objModel, mvpLoc, modelLoc, 1);
                 }
                 else if (obj.first == MUSHROOM)
                 {
                     objModel = glm::scale(objModel, glm::vec3(3.0f));
-                    // glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &(vp * objModel)[0][0]); // Now set inside draw
                     mushroomModel.draw(vp, objModel, mvpLoc, modelLoc, 1);
+                }
+                else if (obj.first == UNICORN)
+                {
+                    glm::mat4 uniModel = glm::translate(glm::mat4(1.0f), obj.second);
+                    uniModel = glm::scale(uniModel, glm::vec3(2.0f));
+                    unicornModel.draw(vp, uniModel, mvpLoc, modelLoc, 1);
                 }
             }
         }

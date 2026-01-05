@@ -10,7 +10,6 @@ struct ChunkRawData {
     std::vector<glm::vec2> uvs;
     std::vector<unsigned int> indices;
     
-    // Сюда сохраняем позиции объектов
     std::vector<std::pair<ObjectType, glm::vec3>> objects;
 };
 

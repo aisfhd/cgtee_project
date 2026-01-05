@@ -16,7 +16,7 @@ void Mesh::cleanup()
 
 void Mesh::initialize(const ChunkRawData &data)
 {
-    chunkObjects = data.objects; // Копируем список объектов
+    chunkObjects = data.objects;
 
     if (data.positions.empty())
         return;

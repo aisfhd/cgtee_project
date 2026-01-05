@@ -9,7 +9,6 @@ struct Mesh {
     int indexCount;
     bool isReady = false;
     
-    // Храним объекты для этого чанка
     std::vector<std::pair<ObjectType, glm::vec3>> chunkObjects;
 
     void update();

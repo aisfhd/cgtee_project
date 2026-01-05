@@ -11,11 +11,9 @@ uniform vec3 lightColor;
 
 void main()
 {
-    // Ambient
     float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * lightColor;
 
-    // Diffuse
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(lightPos - FragmentPos);
     float diff = max(dot(norm, lightDir), 0.0);
