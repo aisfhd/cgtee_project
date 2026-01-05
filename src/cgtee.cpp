@@ -131,10 +131,10 @@ int main(void)
         glViewport(0, 0, shadowRes, shadowRes);
         glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
+        glCullFace(GL_FRONT);
 
         glUseProgram(depthProgramID);
         glEnable(GL_DEPTH_TEST);
-        glCullFace(GL_BACK); // Changed back to BACK
 
         // Рисуем чанки в карту теней
         glm::mat4 modelIdentity = glm::mat4(1.0f);
@@ -158,13 +158,11 @@ int main(void)
                 float scale = (obj.first == TREE_SMALL) ? 4.0f : 3.0f;
                 objModel = glm::scale(objModel, glm::vec3(scale));
 
-                glm::mat4 depthMVP = lightSpaceMatrix * objModel;
-                // glUniformMatrix4fv(depthMVPloc, 1, GL_FALSE, &depthMVP[0][0]); // Now set inside draw
-
+                // Use depthMVPloc for the first parameter, but pass -1 for unused uniforms
                 if (obj.first == TREE_SMALL)
-                    treeModel.draw(lightSpaceMatrix, objModel, depthMVPloc, 0, 0);
+                    treeModel.draw(lightSpaceMatrix, objModel, depthMVPloc, (GLuint)-1, (GLuint)-1);
                 else if (obj.first == MUSHROOM)
-                    mushroomModel.draw(lightSpaceMatrix, objModel, depthMVPloc, 0, 0);
+                    mushroomModel.draw(lightSpaceMatrix, objModel, depthMVPloc, (GLuint)-1, (GLuint)-1);
             }
         }
 

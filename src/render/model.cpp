@@ -9,15 +9,25 @@ void ModelGLTF::draw(glm::mat4 vp, glm::mat4 modelMatrix, GLuint mvpLoc, GLuint 
 {
     if (!loaded)
         return;
+    
     glm::mat4 fullModel = modelMatrix * modelTransform;
-    // Красим модель в белый (или текстуру, если есть)
-    if (colorLoc > 0)
+    
+    // Only set color if a valid location is provided (e.g., in the main pass)
+    if (colorLoc != (GLuint)-1)
         glVertexAttrib4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f);
+
     for (const auto& subMesh : subMeshes) {
         glm::mat4 subModel = fullModel * subMesh.subTransform;
         glm::mat4 mvp = vp * subModel;
-        glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &mvp[0][0]);
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &subModel[0][0]);
+        
+        // Only set MVP if valid
+        if (mvpLoc != (GLuint)-1)
+            glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &mvp[0][0]);
+            
+        // Only set Model matrix if valid (required for lighting pass, not for shadow pass)
+        if (modelLoc != (GLuint)-1)
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &subModel[0][0]);
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, subMesh.textureID);
         glBindVertexArray(subMesh.vao);
@@ -250,15 +260,21 @@ void ModelGLTF::load(const std::string &modelName)
     loaded = true;
     std::cout << "Loaded model: " << gltfFilename << " with " << subMeshes.size() << " submeshes" << std::endl;
 
-    // Apply correction to upright the models
-    glm::mat4 correction = glm::inverse(rootTransform);
-    for (auto& sub : subMeshes) {
-        sub.subTransform = correction * sub.subTransform;
+    float scaleFactor = 1.0f;
+    if (modelName == "mushroom") {
+        scaleFactor = 0.20f;
     }
 
-    // Adjust submesh transforms for mushroom
-    if (modelName == "mushroom" && subMeshes.size() == 2) {
-        subMeshes[1].subTransform = subMeshes[1].subTransform * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 15.0f, 0.0f));
+    if (modelName == "tree") {
+        scaleFactor = 1.60f;
     }
+    
+    // NO ROTATION - just scaling
+    modelTransform = glm::scale(glm::mat4(1.0f), glm::vec3(scaleFactor));
+
+    loaded = true;
+    glBindVertexArray(0);
+
+    
     glBindVertexArray(0);
 }

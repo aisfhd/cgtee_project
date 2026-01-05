@@ -56,7 +56,8 @@ ChunkRawData generateChunkDataCPU(int cx, int cz)
                 else if (r > 0.9997f)
                 {
                     // Гриб
-                    data.objects.push_back({MUSHROOM, glm::vec3(posX, h * BLOCK_SCALE + (BLOCK_SCALE / 2.0f) + 1.0f * BLOCK_SCALE, posZ)});
+                    float groundedY = h * BLOCK_SCALE + (BLOCK_SCALE / 2.0f) - (0.15f * BLOCK_SCALE);
+                    data.objects.push_back({MUSHROOM, glm::vec3(posX, groundedY, posZ)});
                 }
             }
         }

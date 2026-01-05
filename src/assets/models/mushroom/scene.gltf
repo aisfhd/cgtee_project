@@ -3,46 +3,46 @@
     {
       "bufferView": 2,
       "componentType": 5126,
-      "count": 39,
+      "count": 483,
       "max": [
-        1.3685413599014282,
-        1.453399419784546,
-        0.6212955117225647
+        1.7469799518585205,
+        2.720223903656006,
+        7.731770992279053
       ],
       "min": [
-        -1.3361881971359253,
-        -1.435840368270874,
-        -0.836048424243927
+        -5.612904071807861,
+        -3.9343299865722656,
+        -0.09180299937725067
       ],
       "type": "VEC3"
     },
     {
       "bufferView": 2,
-      "byteOffset": 468,
+      "byteOffset": 5796,
       "componentType": 5126,
-      "count": 39,
+      "count": 483,
       "max": [
-        0.9820314645767212,
-        0.9715702533721924,
-        0.9998022317886353
+        0.9993295073509216,
+        0.9996063709259033,
+        0.5171731114387512
       ],
       "min": [
-        -0.9769720435142517,
-        -0.9710110425949097,
-        -0.9995908141136169
+        -0.9993757605552673,
+        -0.9996063709259033,
+        -0.9826365113258362
       ],
       "type": "VEC3"
     },
     {
       "bufferView": 1,
       "componentType": 5126,
-      "count": 39,
+      "count": 483,
       "max": [
-        0.875,
+        0.9480879902839661,
         1.0
       ],
       "min": [
-        0.125,
+        0.0,
         0.0
       ],
       "type": "VEC2"
@@ -50,95 +50,95 @@
     {
       "bufferView": 0,
       "componentType": 5125,
-      "count": 144,
+      "count": 2016,
       "type": "SCALAR"
     },
     {
       "bufferView": 2,
-      "byteOffset": 936,
+      "byteOffset": 11592,
       "componentType": 5126,
-      "count": 125,
+      "count": 315,
       "max": [
-        0.321318656206131,
-        0.2940234839916229,
-        2.133831024169922
+        3.722320079803467,
+        4.974417209625244,
+        10.991905212402344
       ],
       "min": [
-        -0.321318656206131,
-        -0.2940234839916229,
-        0.13383114337921143
+        -9.010360717773438,
+        -5.559028148651123,
+        2.556107997894287
       ],
       "type": "VEC3"
     },
     {
       "bufferView": 2,
-      "byteOffset": 2436,
+      "byteOffset": 15372,
       "componentType": 5126,
-      "count": 125,
+      "count": 315,
       "max": [
-        1.0,
-        1.0,
-        1.0
+        0.9814527630805969,
+        0.9758421182632446,
+        0.9826365113258362
       ],
       "min": [
-        -1.0,
-        -1.0,
-        -1.0
+        -0.959845244884491,
+        -0.9537999033927917,
+        -0.9989368915557861
       ],
       "type": "VEC3"
     },
     {
       "bufferView": 1,
-      "byteOffset": 312,
+      "byteOffset": 3864,
       "componentType": 5126,
-      "count": 125,
+      "count": 315,
       "max": [
-        0.875,
-        1.0
+        0.9953340291976929,
+        0.9962249994277954
       ],
       "min": [
-        0.125,
-        0.0
+        0.006701999809592962,
+        0.024901000782847404
       ],
       "type": "VEC2"
     },
     {
       "bufferView": 0,
-      "byteOffset": 576,
+      "byteOffset": 8064,
       "componentType": 5125,
-      "count": 576,
+      "count": 1152,
       "type": "SCALAR"
     }
   ],
   "asset": {
     "extras": {
-      "author": "yyacobb (https://sketchfab.com/yyacobb)",
-      "license": "SKETCHFAB Standard (https://sketchfab.com/licenses)",
-      "source": "https://sketchfab.com/3d-models/low-poly-red-mushroom-3d-model-5738764b3868416a864b79db6278bf39",
-      "title": "Low Poly Red Mushroom 3D Model"
+      "author": "Gwappa (https://sketchfab.com/Gwappa)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/mushrooms-c2dbb88a5e9c4e82a180e13b472015ed",
+      "title": "Mushrooms"
     },
-    "generator": "Sketchfab-16.74.0",
+    "generator": "Sketchfab-12.68.0",
     "version": "2.0"
   },
   "bufferViews": [
     {
       "buffer": 0,
-      "byteLength": 2880,
+      "byteLength": 12672,
       "name": "floatBufferViews",
       "target": 34963
     },
     {
       "buffer": 0,
-      "byteLength": 1312,
-      "byteOffset": 2880,
+      "byteLength": 6384,
+      "byteOffset": 12672,
       "byteStride": 8,
       "name": "floatBufferViews",
       "target": 34962
     },
     {
       "buffer": 0,
-      "byteLength": 3936,
-      "byteOffset": 4192,
+      "byteLength": 19152,
+      "byteOffset": 19056,
       "byteStride": 12,
       "name": "floatBufferViews",
       "target": 34962
@@ -146,45 +146,66 @@
   ],
   "buffers": [
     {
-      "byteLength": 8128,
+      "byteLength": 38208,
       "uri": "scene.bin"
     }
   ],
   "images": [
     {
-      "uri": "textures/Material.001_baseColor.png"
+      "uri": "textures/standardSurface2SG_baseColor.png"
     },
     {
-      "uri": "textures/Material_baseColor.png"
+      "uri": "textures/standardSurface2SG_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/standardSurface3SG_baseColor.png"
+    },
+    {
+      "uri": "textures/standardSurface3SG_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/standardSurface3SG_emissive.png"
     }
   ],
   "materials": [
     {
       "doubleSided": true,
-      "name": "Material.001",
+      "name": "standardSurface2SG",
       "pbrMetallicRoughness": {
         "baseColorTexture": {
           "index": 0
         },
         "metallicFactor": 0.0,
-        "roughnessFactor": 0.8211145618000169
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
       }
     },
     {
       "doubleSided": true,
-      "name": "Material",
+      "emissiveFactor": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "emissiveTexture": {
+        "index": 4
+      },
+      "name": "standardSurface3SG",
       "pbrMetallicRoughness": {
         "baseColorTexture": {
-          "index": 1
+          "index": 2
         },
         "metallicFactor": 0.0,
-        "roughnessFactor": 0.8211145618000169
+        "metallicRoughnessTexture": {
+          "index": 3
+        }
       }
     }
   ],
   "meshes": [
     {
-      "name": "mushroomcap_Material.001_0",
+      "name": "Object_0",
       "primitives": [
         {
           "attributes": {
@@ -199,7 +220,7 @@
       ]
     },
     {
-      "name": "stem_Material_0",
+      "name": "Object_1",
       "primitives": [
         {
           "attributes": {
@@ -241,170 +262,18 @@
     },
     {
       "children": [
-        2
+        2,
+        3
       ],
-      "matrix": [
-        0.009999999776482582,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.009999999776482582,
-        0.0,
-        0.0,
-        -0.009999999776482582,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0
-      ],
-      "name": "mushroomnew.fbx"
-    },
-    {
-      "children": [
-        3,
-        5,
-        8,
-        10
-      ],
-      "name": "RootNode"
-    },
-    {
-      "children": [
-        4
-      ],
-      "matrix": [
-        -65.1558127516791,
-        -44.52713915455176,
-        -61.417049289096546,
-        0.0,
-        -32.401349332924404,
-        89.53957282709818,
-        -30.5420854760369,
-        0.0,
-        68.59207001076241,
-        8.666908837178815e-06,
-        -72.76761921184274,
-        0.0,
-        735.88916015625,
-        495.8309326171875,
-        692.5791015625,
-        1.0
-      ],
-      "name": "Camera"
-    },
-    {
-      "name": "Object_4"
-    },
-    {
-      "children": [
-        6
-      ],
-      "matrix": [
-        -29.086477364379697,
-        -5.518905590722295,
-        -95.51711910171437,
-        0.0,
-        56.63932069164076,
-        79.46722539115298,
-        -21.839126361216156,
-        0.0,
-        77.11007920637729,
-        -60.452475336912016,
-        -19.988344364310564,
-        0.0,
-        407.6245422363281,
-        590.38623046875,
-        -100.54539489746094,
-        1.0
-      ],
-      "name": "Light"
-    },
-    {
-      "children": [
-        7
-      ],
-      "matrix": [
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        2.220446049250313e-16,
-        1.0,
-        0.0,
-        0.0,
-        -1.0,
-        2.220446049250313e-16,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0
-      ],
-      "name": "Object_6"
-    },
-    {
-      "name": "Object_7"
-    },
-    {
-      "children": [
-        9
-      ],
-      "matrix": [
-        100.0,
-        0.0,
-        0.0,
-        0.0,
-        -0.0,
-        -1.629206793918314e-05,
-        -99.99999999999868,
-        0.0,
-        0.0,
-        99.99999999999868,
-        -1.629206793918314e-05,
-        0.0,
-        -3.628162384033203,
-        226.2594451904297,
-        3.235544204711914,
-        1.0
-      ],
-      "name": "mushroomcap"
+      "name": "c3dcb1f8e4154e5a96b0b15028874520.obj.cleaner.materialmerger.gles"
     },
     {
       "mesh": 0,
-      "name": "mushroomcap_Material.001_0"
-    },
-    {
-      "children": [
-        11
-      ],
-      "matrix": [
-        100.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        -1.629206793918314e-05,
-        -99.99999999999868,
-        0.0,
-        0.0,
-        99.99999999999868,
-        -1.629206793918314e-05,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0
-      ],
-      "name": "stem"
+      "name": "Object_2"
     },
     {
       "mesh": 1,
-      "name": "stem_Material_0"
+      "name": "Object_3"
     }
   ],
   "samplers": [
@@ -432,6 +301,18 @@
     {
       "sampler": 0,
       "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    },
+    {
+      "sampler": 0,
+      "source": 3
+    },
+    {
+      "sampler": 0,
+      "source": 4
     }
   ]
 }

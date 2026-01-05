@@ -33,6 +33,10 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDirNorm)
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     // Transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
+
+    if(projCoords.z > 1.0 || projCoords.x > 1.0 || projCoords.x < 0.0 || 
+       projCoords.y > 1.0 || projCoords.y < 0.0) 
+        return 0.0;
     
     // Get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
@@ -42,7 +46,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDirNorm)
         return 0.0;
 
     // Dynamic bias based on light angle to reduce shadow acne
-    float bias = max(0.005 * (1.0 - dot(normal, lightDirNorm)), 0.0005);
+    float bias = max(0.0001 * (1.0 - dot(normal, lightDirNorm)), 0.00001);
     
     // PCF (Percentage-Closer Filtering) for soft shadows
     float shadow = 0.0;
