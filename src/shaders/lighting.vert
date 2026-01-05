@@ -1,7 +1,7 @@
 #version 330 core
 
 layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec4 aColor; // Используем vec4 для альфа-канала (прозрачности)
+layout (location = 1) in vec4 aColor;
 layout (location = 2) in vec3 aNormal;
 layout (location = 3) in vec2 aTexCoord;
 
@@ -14,7 +14,7 @@ out float Visibility;
 uniform mat4 MVP;
 uniform mat4 Model;
 
-const float density = 0.0035; // Плотность тумана
+const float density = 0.0035;
 const float gradient = 1.5;
 
 void main()
@@ -26,7 +26,6 @@ void main()
     Color = aColor;
     TexCoord = aTexCoord;
 
-    // Расчет тумана
     vec4 positionRelativeToCam = MVP * vec4(aPos, 1.0);
     float distance = length(positionRelativeToCam.xyz);
     Visibility = exp(-pow((distance * density), gradient));

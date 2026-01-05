@@ -36,9 +36,7 @@ const int CHUNK_SIZE = 16;
 const float BLOCK_SCALE = 5.0f;
 const int RENDER_DISTANCE = 8; 
 const float NOISE_SCALE = 0.04f;
-// Вода убрана по просьбе
 
-// Глобальный шейдер
 GLuint globalProgramID = 0;
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 60.0f, 0.0f);
@@ -60,7 +58,6 @@ float fov = 90.0f;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-// --- Шум ---
 float noise(float x, float y) {
     int n = int(x * 40.0 + y * 6400.0);
     n = (n << 13) ^ n;
@@ -90,12 +87,10 @@ int getWorldHeight(float x, float z) {
     return (int)(val * 12.0f);
 }
 
-// Псевдо-случайное число для генерации деревьев (детерминированное по координатам)
 float randomDeterministic(float x, float z) {
     return  glm::fract(sin(glm::dot(glm::vec2(x, z), glm::vec2(12.9898, 78.233))) * 43758.5453);
 }
 
-// --- Типы объектов ---
 enum ObjectType {
     NONE = 0,
     TREE_SMALL,
@@ -110,12 +105,10 @@ struct ChunkRawData {
     std::vector<glm::vec3> normals;
     std::vector<glm::vec2> uvs;
     std::vector<unsigned int> indices;
-    
-    // Сюда сохраняем позиции объектов
+
     std::vector<std::pair<ObjectType, glm::vec3>> objects;
 };
 
-// --- Простой загрузчик GLTF Моделей ---
 struct ModelGLTF {
     GLuint vao, vbo, ebo;
     int indexCount;
@@ -128,7 +121,6 @@ struct ModelGLTF {
         std::string warn;
 
         bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, filename); 
-        // Если у тебя бинарный glb, используй LoadBinaryFromFile
         
         if (!warn.empty()) std::cout << "Warn: " << warn << std::endl;
         if (!err.empty()) std::cout << "Err: " << err << std::endl;
@@ -137,19 +129,14 @@ struct ModelGLTF {
             return;
         }
 
-        // Упрощенная загрузка ПЕРВОГО примитива ПЕРВОГО меша
         if (model.meshes.size() > 0 && model.meshes[0].primitives.size() > 0) {
             const tinygltf::Primitive& primitive = model.meshes[0].primitives[0];
             
-            // Получаем координаты (POSITION)
             if (primitive.attributes.find("POSITION") != primitive.attributes.end()) {
                 const tinygltf::Accessor& accessor = model.accessors[primitive.attributes.at("POSITION")];
                 const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
                 const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
                 
-                // TODO: Здесь нужен более сложный код для полноценной загрузки
-                // Для простоты примера мы предполагаем, что данные упакованы просто float3
-                // В реальном проекте нужно учитывать stride, componentType и т.д.
                 
                 glGenVertexArrays(1, &vao);
                 glBindVertexArray(vao);
@@ -161,8 +148,6 @@ struct ModelGLTF {
                 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
                 glEnableVertexAttribArray(0);
                 
-                // Нормали и UV опускаем для краткости, но они нужны для освещения!
-                // Если модель черная - значит нет нормалей. 
                 
                 if (primitive.indices >= 0) {
                     const tinygltf::Accessor& indexAccessor = model.accessors[primitive.indices];
@@ -185,7 +170,6 @@ struct ModelGLTF {
     void draw(glm::mat4 modelMatrix, GLuint modelLoc, GLuint colorLoc) {
         if (!loaded) return;
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &modelMatrix[0][0]);
-        // Красим модель в белый (или текстуру, если есть)
         glVertexAttrib4f(1, 1.0f, 1.0f, 1.0f, 1.0f); 
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, 0); // Обычно gltf использует short indices
@@ -202,7 +186,6 @@ struct Mesh {
     int indexCount;
     bool isReady = false;
     
-    // Храним объекты для этого чанка
     std::vector<std::pair<ObjectType, glm::vec3>> chunkObjects;
 
     void cleanup() {
@@ -218,8 +201,8 @@ struct Mesh {
     }
 
     void initialize(const ChunkRawData &data) {
-        chunkObjects = data.objects; // Копируем список объектов
-        
+        chunkObjects = data.objects; 
+
         if (data.positions.empty()) return;
 
         glGenVertexArrays(1, &vao);
@@ -277,7 +260,6 @@ std::mutex uploadQueueMutex;
 std::atomic<bool> threadRunning{true};
 std::set<ChunkCoord> chunksBeingProcessed;
 
-// --- Генерация Куба ---
 void addCubeToRaw(ChunkRawData &data, float x, float y, float z, float s, glm::vec4 color, int texID) {
     float h = s / 2.0f;
     glm::vec3 v[] = {
@@ -309,7 +291,6 @@ void addCubeToRaw(ChunkRawData &data, float x, float y, float z, float s, glm::v
     addFace(3, 2, 7, 6, glm::vec3(0, 1, 0));  addFace(5, 4, 1, 0, glm::vec3(0, -1, 0));
 }
 
-// --- Генерация с БИОМАМИ и МОДЕЛЯМИ ---
 ChunkRawData generateChunkDataCPU(int cx, int cz) {
     ChunkRawData data;
     data.cx = cx; data.cz = cz;
@@ -321,35 +302,27 @@ ChunkRawData generateChunkDataCPU(int cx, int cz) {
             float posX = worldX * BLOCK_SCALE;
             float posZ = worldZ * BLOCK_SCALE;
             
-            glm::vec4 color(0.2f, 0.7f, 0.2f, 1.0f); // Трава
+            glm::vec4 color(0.2f, 0.7f, 0.2f, 1.0f);
             int texID = 0;
-            if (h > 6) { color = glm::vec4(0.9f, 0.9f, 0.95f, 1.0f); texID = 1; } // Снег
-            else if (h <= 0) { color = glm::vec4(0.8f, 0.8f, 0.4f, 1.0f); texID = 3; } // Песок
+            if (h > 6) { color = glm::vec4(0.9f, 0.9f, 0.95f, 1.0f); texID = 1; }
+            else if (h <= 0) { color = glm::vec4(0.8f, 0.8f, 0.4f, 1.0f); texID = 3; }
 
             addCubeToRaw(data, posX, h * BLOCK_SCALE, posZ, BLOCK_SCALE, color, texID);
 
-            // Земля под блоком
             for (int d = 1; d <= 2; d++) {
                 addCubeToRaw(data, posX, (h - d) * BLOCK_SCALE, posZ, BLOCK_SCALE, glm::vec4(0.4f, 0.3f, 0.2f, 1.0f), 3);
             }
 
-            // --- Генерация объектов (Деревья, Грибы) ---
-            // Генерируем только на траве (h > 0 и h <= 6)
             if (h > 0 && h <= 6) {
                 float r = randomDeterministic((float)worldX, (float)worldZ);
                 
-                // Чтобы не пересекались, используем else if
-                // Настраиваем вероятность (0.98 = редко)
                 if (r > 0.99995f) {
-                    // Гигантское дерево (Очень редко)
                     data.objects.push_back({TREE_GIANT, glm::vec3(posX, h * BLOCK_SCALE + (BLOCK_SCALE/2.0f), posZ)});
                 } 
                 else if (r > 0.99985f) {
-                    // Обычное дерево
                     data.objects.push_back({TREE_SMALL, glm::vec3(posX, h * BLOCK_SCALE + (BLOCK_SCALE/2.0f), posZ)});
                 }
                 else if (r > 0.9997f) {
-                    // Гриб
                     data.objects.push_back({MUSHROOM, glm::vec3(posX, h * BLOCK_SCALE + (BLOCK_SCALE/2.0f), posZ)});
                 }
             }
@@ -493,7 +466,6 @@ int main(void) {
     GLuint skyColorLoc = glGetUniformLocation(globalProgramID, "skyColor");
     GLuint texLoc = glGetUniformLocation(globalProgramID, "texture1");
 
-    // Цвет для моделей (чтобы не использовать текстуру блоков)
     GLuint colorAttribLoc = 1; 
 
     while (!glfwWindowShouldClose(window)) {
@@ -518,14 +490,12 @@ int main(void) {
         glUniform3fv(skyColorLoc, 1, &skyColor[0]);
         glUniform3fv(viewPosLoc, 1, &cameraPos[0]);
 
-        // Point Light
         float time = (float)glfwGetTime();
         glm::vec3 pLightPos = glm::vec3(sin(time) * 50.0f, 50.0f, cos(time) * 50.0f);
         glm::vec3 pLightColor = glm::vec3(1.0f, 0.5f, 0.0f);
         glUniform3fv(pointLightPosLoc, 1, &pLightPos[0]);
         glUniform3fv(pointLightColorLoc, 1, &pLightColor[0]);
 
-        // 1. Рисуем МИР (Чанки)
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, blockTexture);
         glUniform1i(texLoc, 0);
@@ -538,34 +508,28 @@ int main(void) {
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
             kv.second.render();
         }
-
-        // 2. Рисуем ОБЪЕКТЫ (Деревья, Грибы)
-        // Они используют тот же шейдер, но мы можем отключить текстуру или использовать другую
-        // Для простоты используем ту же текстуру или белый цвет (если у моделей нет UV)
         
         for (auto &kv : activeChunks) {
             if (!kv.second.isReady) continue;
             
             for (auto &obj : kv.second.chunkObjects) {
                 glm::mat4 objModel = glm::translate(glm::mat4(1.0f), obj.second);
-                // Настраиваем масштаб моделей (gltf часто бывают огромными или маленькими)
                 float scale = 1.0f; 
                 
                 if (obj.first == TREE_SMALL) {
-                    scale = 20.0f; // Подбери значение
+                    scale = 20.0f;
                     objModel = glm::scale(objModel, glm::vec3(scale));
-                    // Считаем MVP и рисуем
                     glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &(vp * objModel)[0][0]);
                     treeModel.draw(objModel, modelLoc, colorAttribLoc);
                 }
                 else if (obj.first == TREE_GIANT) {
-                    scale = 50.0f; // Большое дерево
+                    scale = 50.0f;
                     objModel = glm::scale(objModel, glm::vec3(scale));
                     glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &(vp * objModel)[0][0]);
                     giantTreeModel.draw(objModel, modelLoc, colorAttribLoc);
                 }
                 else if (obj.first == MUSHROOM) {
-                    scale = 3.0f; // Маленький гриб
+                    scale = 3.0f;
                     objModel = glm::scale(objModel, glm::vec3(scale));
                     glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &(vp * objModel)[0][0]);
                     mushroomModel.draw(objModel, modelLoc, colorAttribLoc);
@@ -582,7 +546,6 @@ int main(void) {
     return 0;
 }
 
-// ... (Остальные функции ввода без изменений)
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
