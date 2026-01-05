@@ -1,0 +1,8 @@
+Model Information:
+* title:	Simple Tree - Low Poly
+* source:	https://sketchfab.com/3d-models/simple-tree-low-poly-9b3ab09beb364860a5b34e379151f6f0
+* author:	hseysen6 (https://sketchfab.com/hseysen)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

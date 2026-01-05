@@ -17,7 +17,6 @@ static int windowWidth = 1024;
 static int windowHeight = 768;
 
 int main(){
-    // Initialise GLFW
 	if (!glfwInit())
 	{
 		std::cerr << "Failed to initialize GLFW." << std::endl;
@@ -46,7 +45,6 @@ int main(){
 
     glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-    //glfwSetTime(0);
 	double rand_var;
 	double r,g,b;
 

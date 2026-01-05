@@ -1,0 +1,8 @@
+Model Information:
+* title:	Free Low-Poly Tree
+* source:	https://sketchfab.com/3d-models/free-low-poly-tree-3c688f3128c04ee0b5d8c319835f54c5
+* author:	samsikua (https://sketchfab.com/samsikua)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works
