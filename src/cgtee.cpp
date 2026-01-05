@@ -16,7 +16,7 @@ static GLFWwindow *window;
 static int windowWidth = 1024;
 static int windowHeight = 768;
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 50.0f, 500.0f);
+glm::vec3 cameraPos = glm::vec3(50.0f, 350.0f, 500.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -287,7 +287,7 @@ void processInput(GLFWwindow *window)
     AABB playerBox = getPlayerBounds(nextFeetPos);
 
     for (const auto& obj : worldObjects) {
-        if (CheckCollision(playerBox, obj.worldBounds)) {!
+        if (CheckCollision(playerBox, obj.worldBounds)) {
             collidedY = true;
 
             if (verticalVelocity <= 0) {
